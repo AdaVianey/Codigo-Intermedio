@@ -1,0 +1,175 @@
+;Programa: Practica 03
+;Proposito: Hacer sumas y restas
+;Elaborado por: Victor Hugo Ontiveros Villalejos
+.model small
+.stack
+.data
+num1    db      0
+num2    db      0
+sum     db      0
+mens    db      'Escriba el primer numero: $'
+mens2   db      'Escriba el segundo numero: $'
+mens3   db      'La suma es: $'
+mens4   db      'La resta es: $'
+.code
+comienza:
+mov     dx,@data
+mov     ds,dx
+
+;muestra mensaje1
+mov     ah,09
+lea     dx,mens
+int     21h
+
+;lee num1
+mov     ah,01
+int     21H
+sub     al,30h
+mov     num1,al
+
+;retorno del carro
+    mov     dl,0dh
+    mov     ah,02h
+    int     21h
+;avance de linea
+    mov     dl,0ah
+    mov     ah,02h
+    int     21h
+
+;muestra mensaje2
+mov     ah,09
+lea     dx,mens2
+int     21h
+
+;lee num2
+mov     ah,01
+int     21H
+sub     al,30h
+mov     num2,al
+
+;retorno del carro
+    mov     dl,0dh
+    mov     ah,02h
+    int     21h
+;avance de linea
+    mov     dl,0ah
+    mov     ah,02h
+    int     21h
+
+;se muestra mens3   
+    mov     ah,09
+    lea     dx,mens3
+    int     21h
+;se hace e imprime la suma
+    mov     dl,num1
+    add     dl,num2
+    add     dl,30h
+    mov     ah,02
+    int     21h
+    
+;retorno del carro
+    mov     dl,0dh
+    mov     ah,02h
+    int     21h
+;avance de linea
+    mov     dl,0ah
+    mov     ah,02h
+    int     21h
+
+;se muestra mens4
+    mov     ah,09
+    lea     dx,mens4
+    int     21h
+;se hace e imprime la resta
+    mov     dl,num1
+    sub     dl,num2
+    add     dl,30h
+    mov     ah,02
+    int     21h
+    
+    .exit
+end comienza
+
+
+;Programa: Practica 07
+;Proposito: Multiplicar  2 numeros decimales desempacados de varios digitos (Multibyte). Mostrar el resusltado
+;Elaborado por: Victor Hugo Ontiveros Villalejos
+
+            .model small
+            .stack
+            .data
+mens        db              '38x59= $'
+
+num1        db              3H,8H
+num2        db              5H,9H
+multi       db              0,0,0,0
+cont        dw              0
+            .code
+comienza:
+            mov             dx,@data
+            mov             ds,dx
+            ;primera mult
+            mov             al,num1[1]
+            mul             num2[1]
+            aam
+            
+            mov             multi[3],al
+            mov             multi[2],ah
+            
+            ;segunda mult
+            mov             al,num1[0]
+            mul             num2[1]
+            aam
+            
+            add             multi[2],al
+            mov             multi[1],ah
+            
+            ;tercera mult
+            mov             al,num1[1]
+            mul             num2[0]
+            aam
+            
+            add             multi[2],al
+            add             multi[1],ah
+            
+            ;por si la suma da mas de 10
+            mov             al,multi[2]
+            cbw
+            aam
+            mov             multi[2],al
+            add             multi[1],ah
+            
+            ;cuarta mult
+            mov             al,num1[0]
+            mul             num2[0]
+            aam
+            
+            add             multi[1],al
+            add             multi[0],ah
+            
+            ;por si la suma da mas de 10
+            mov             al,multi[1]
+            cbw
+            aam
+            mov             multi[1],al
+            add             multi[0],ah
+            
+            ;imprime mensaje
+            lea dx,mens
+            mov ah,09H
+            int 21H
+            
+            ;Imprime resultado
+            mov cx,4
+            mov ah,02H
+imprimir:
+            mov si,cont
+            add multi[si],30H
+            mov dl,multi[si]
+            int 21H
+            inc cont
+            loop imprimir
+
+            .exit
+            end comienza
+
